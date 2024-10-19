@@ -108,6 +108,13 @@ pub enum Command {
         is_offset: bool,
     },
     Seek(i64),
+    Download {
+        track_id: String,
+        path: String,
+    },
+    PlayLocal {
+        path: String,
+    },
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -118,6 +125,13 @@ pub enum Request {
     Like { unlike: bool },
     Playlist(PlaylistCommand),
     Search { query: String },
+    Download {
+        track_id: String,
+        path: String,
+    },
+    PlayLocal {
+        path: String,
+    },
 }
 
 #[derive(Debug, Serialize, Deserialize)]

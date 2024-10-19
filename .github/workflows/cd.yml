@@ -72,3 +72,20 @@ jobs:
           files: target/${{ matrix.target }}/release/spotify_player-*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to GCP
+        uses: google-github-actions/deploy-cloud-functions@v0
+        with:
+          name: spotify-player
+          runtime: nodejs14
+          entry_point: app
+          source_dir: .
+          env_vars: |
+            SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}
+            SPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}
+            SPOTIFY_REDIRECT_URI=${{ secrets.SPOTIFY_REDIRECT_URI }}
+
+      - name: Test offline download and playback
+        run: |
+          cargo test --test offline_download
+          cargo test --test offline_playback

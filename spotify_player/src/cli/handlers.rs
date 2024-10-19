@@ -216,6 +216,8 @@ pub fn handle_cli_subcommand(cmd: &str, args: &ArgMatches) -> Result<()> {
                 .expect("query is required")
                 .to_owned(),
         },
+        "download" => handle_download_subcommand(args)?,
+        "play-local" => handle_play_local_subcommand(args)?,
         _ => unreachable!(),
     };
 
@@ -323,4 +325,24 @@ fn handle_playlist_subcommand(args: &ArgMatches) -> Result<Request> {
     };
 
     Ok(Request::Playlist(command))
+}
+
+fn handle_download_subcommand(args: &ArgMatches) -> Result<Request> {
+    let track_id = args
+        .get_one::<String>("track_id")
+        .expect("track_id is required")
+        .to_owned();
+    let path = args
+        .get_one::<String>("path")
+        .expect("path is required")
+        .to_owned();
+    Ok(Request::Download { track_id, path })
+}
+
+fn handle_play_local_subcommand(args: &ArgMatches) -> Result<Request> {
+    let path = args
+        .get_one::<String>("path")
+        .expect("path is required")
+        .to_owned();
+    Ok(Request::PlayLocal { path })
 }

@@ -58,3 +58,6 @@ jobs:
 
       - name: Cargo clippy without features
         run: cargo clippy --no-default-features -- -D warnings
+
+      - name: Test offline download and playback
+        run: cargo test --no-default-features --features ${{ env.RUST_FEATURES }} -- --test-threads=1

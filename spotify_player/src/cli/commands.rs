@@ -204,4 +204,12 @@ pub fn init_playlist_subcommand() -> Command {
                 .long("delete")
                 .action(clap::ArgAction::SetTrue)
                 .help("Deletes any previously imported tracks that are no longer in an imported playlist since last import.")))
+        .subcommand(Command::new("download").about("Download a track")
+            .arg(Arg::new("track_id")
+                .value_parser(clap::builder::NonEmptyStringValueParser::new()))
+            .arg(Arg::new("path")
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())))
+        .subcommand(Command::new("play-local").about("Play a local track")
+            .arg(Arg::new("path")
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())))
 }

@@ -429,3 +429,56 @@ The application stores logs inside the `$APP_CACHE_FOLDER/spotify-player-*.log` 
 ## Acknowledgement
 
 `spotify_player` is written in [Rust](https://www.rust-lang.org) and is built on top of awesome libraries such as [tui-rs](https://github.com/fdehau/tui-rs), [rspotify](https://github.com/ramsayleung/rspotify), [librespot](https://github.com/librespot-org/librespot), and [many more](spotify_player/Cargo.toml). It's highly inspired by [spotify-tui](https://github.com/Rigellute/spotify-tui) and [ncspot](https://github.com/hrkfdn/ncspot).
+
+## Build, Test, and Run
+
+To build the project, run the following command in the root directory of the project:
+
+```shell
+cargo build
+```
+
+To test the project, run the following command:
+
+```shell
+cargo test
+```
+
+To run the project, use the following command:
+
+```shell
+cargo run
+```
+
+To build, test, and run the new code in GitHub, you can use GitHub Actions. Create a workflow file in the `.github/workflows` directory with the following content:
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+    - name: Build
+      run: cargo build
+    - name: Test
+      run: cargo test
+    - name: Run
+      run: cargo run
+```
+
+This workflow will build, test, and run the project on every push and pull request to the `main` branch.
