@@ -3,13 +3,15 @@ use std::{
     fs::{create_dir_all, remove_dir_all},
     io::Write,
     net::SocketAddr,
-    path::PathBuf,
 };
+#[cfg(feature = "offline-playback")]
+use std::path::PathBuf;
 
 use anyhow::{Context as _, Result};
 use rand::seq::SliceRandom;
 use tokio::net::UdpSocket;
 use tracing::Instrument;
+#[cfg(feature = "offline-playback")]
 use reqwest::Url;
 
 use crate::{
@@ -22,7 +24,9 @@ use rspotify::{
     model::*,
     prelude::{BaseClient, OAuthClient},
 };
+#[cfg(feature = "offline-playback")]
 use rodio;
+#[cfg(feature = "offline-playback")]
 use std::fs;
 
 use super::*;
@@ -173,19 +177,17 @@ async fn handle_socket_request(
             let resp = handle_search_request(client, query).await?;
             Ok(resp)
         }
-        // Request::Download { track_id, path } => {
-        //     handle_download_request(client, track_id.into(), path.into()).await?;
-        //     Ok(Vec::new())
-        // }
+        #[cfg(feature = "offline-playback")]
         Request::Download { track_id, path } => {
             // Convert `track_id` (String) to `TrackId`
             let track_id_obj = rspotify::model::TrackId::from_id(&track_id)
                 .map_err(|err| anyhow::anyhow!("Invalid track ID: {}", err))?;
-    
+
             handle_download_request(client, track_id_obj, path.into()).await?;
             Ok(Vec::new())
         }
 
+        #[cfg(feature = "offline-playback")]
         Request::PlayLocal { path } => {
             handle_play_local_request(client, path.into()).await?;
             Ok(Vec::new())
@@ -442,19 +444,15 @@ async fn handle_playback_request(
                 progress + chrono::Duration::try_milliseconds(position_offset_ms).unwrap(),
             )
         }
-        // Command::Download { track_id, path } => {
-        //     let track_id_obj = rspotify::model::TrackId::from_id(&track_id)
-        //         .map_err(|err| anyhow::anyhow!("Invalid track ID: {}", err))?;
-        //     handle_download_request(client, track_id.into(), path.into()).await?;
-        //     return Ok(());
-        // }
+        #[cfg(feature = "offline-playback")]
         Command::Download { track_id, path } => {
             let track_id_obj = rspotify::model::TrackId::from_id(&track_id)
-                .map_err(|err| anyhow::anyhow!("Invalid track ID: {}", err))?;  
-            handle_download_request(client, track_id_obj, path.into()).await?;   
+                .map_err(|err| anyhow::anyhow!("Invalid track ID: {}", err))?;
+            handle_download_request(client, track_id_obj, path.into()).await?;
             return Ok(());
         }
 
+        #[cfg(feature = "offline-playback")]
         Command::PlayLocal { path } => {
             handle_play_local_request(client, path.into()).await?;
             return Ok(());
@@ -776,6 +774,7 @@ async fn playlist_import(
     Ok(result)
 }
 
+#[cfg(feature = "offline-playback")]
 async fn handle_download_request(client: &Client, track_id: TrackId<'_>, path: PathBuf) -> Result<()> {
     let track = client.track(track_id).await?;
     let url = format!("https://api.spotify.com/v1/tracks/{}/preview", track.id.id());
@@ -785,6 +784,7 @@ async fn handle_download_request(client: &Client, track_id: TrackId<'_>, path: P
     Ok(())
 }
 
+#[cfg(feature = "offline-playback")]
 async fn handle_play_local_request(_client: &Client, path: PathBuf) -> Result<()> {
     let bytes = fs::read(path)?;
     let cursor = std::io::Cursor::new(bytes);

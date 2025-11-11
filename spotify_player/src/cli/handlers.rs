@@ -216,7 +216,9 @@ pub fn handle_cli_subcommand(cmd: &str, args: &ArgMatches) -> Result<()> {
                 .expect("query is required")
                 .to_owned(),
         },
+        #[cfg(feature = "offline-playback")]
         "download" => handle_download_subcommand(args)?,
+        #[cfg(feature = "offline-playback")]
         "play-local" => handle_play_local_subcommand(args)?,
         _ => unreachable!(),
     };
@@ -327,6 +329,7 @@ fn handle_playlist_subcommand(args: &ArgMatches) -> Result<Request> {
     Ok(Request::Playlist(command))
 }
 
+#[cfg(feature = "offline-playback")]
 fn handle_download_subcommand(args: &ArgMatches) -> Result<Request> {
     let track_id = args
         .get_one::<String>("track_id")
@@ -339,6 +342,7 @@ fn handle_download_subcommand(args: &ArgMatches) -> Result<Request> {
     Ok(Request::Download { track_id, path })
 }
 
+#[cfg(feature = "offline-playback")]
 fn handle_play_local_subcommand(args: &ArgMatches) -> Result<Request> {
     let path = args
         .get_one::<String>("path")

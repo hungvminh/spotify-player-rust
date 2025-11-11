@@ -49,7 +49,7 @@ clap_complete = "4.5.7"
 which = "6.0.1"
 fuzzy-matcher = { version = "0.3.7", optional = true }
 html-escape = "0.2.13"
-rodio = "0.14.0"
+rodio = { version = "0.14.0", optional = true }
 
 [target.'cfg(any(target_os = "windows", target_os = "macos"))'.dependencies.winit]
 version = "0.30.3"
@@ -85,8 +85,9 @@ sixel = ["image", "viuer/sixel"]
 notify = ["notify-rust"]
 daemon = ["daemonize", "streaming"]
 fzf = ["fuzzy-matcher"]
+offline-playback = ["rodio"]
 
-default = ["rodio-backend", "media-control"]
+default = ["rodio-backend", "media-control", "offline-playback"]
 
 [package.metadata.binstall]
 pkg-url = "{ repo }/releases/download/v{ version }/{ name }_{ target }{ archive-suffix }"

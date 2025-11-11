@@ -108,10 +108,12 @@ pub enum Command {
         is_offset: bool,
     },
     Seek(i64),
+    #[cfg(feature = "offline-playback")]
     Download {
         track_id: String,
         path: String,
     },
+    #[cfg(feature = "offline-playback")]
     PlayLocal {
         path: String,
     },
@@ -125,10 +127,12 @@ pub enum Request {
     Like { unlike: bool },
     Playlist(PlaylistCommand),
     Search { query: String },
+    #[cfg(feature = "offline-playback")]
     Download {
         track_id: String,
         path: String,
     },
+    #[cfg(feature = "offline-playback")]
     PlayLocal {
         path: String,
     },

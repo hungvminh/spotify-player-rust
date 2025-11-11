@@ -28,7 +28,7 @@ pub fn get_track_album_image_url(track: &rspotify::model::FullTrack) -> Option<&
     }
 }
 
-pub fn parse_uri(uri: &str) -> Cow<str> {
+pub fn parse_uri(uri: &str) -> Cow<'_, str> {
     let parts = uri.split(':').collect::<Vec<_>>();
     // The below URI probably has a format of `spotify:user:{user_id}:{type}:{id}`,
     // but `rspotify` library expects to receive an URI of format `spotify:{type}:{id}`.

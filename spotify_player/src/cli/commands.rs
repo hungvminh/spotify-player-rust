@@ -157,7 +157,8 @@ pub fn init_generate_command() -> Command {
 }
 
 pub fn init_playlist_subcommand() -> Command {
-    Command::new("playlist")
+    #[allow(unused_mut)]
+    let mut cmd = Command::new("playlist")
         .about("Playlist editing")
         .subcommand_required(true)
         .subcommand(Command::new("new").about("Create a new playlist")
@@ -203,13 +204,20 @@ pub fn init_playlist_subcommand() -> Command {
                 .short('d')
                 .long("delete")
                 .action(clap::ArgAction::SetTrue)
-                .help("Deletes any previously imported tracks that are no longer in an imported playlist since last import.")))
-        .subcommand(Command::new("download").about("Download a track")
-            .arg(Arg::new("track_id")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new()))
-            .arg(Arg::new("path")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())))
-        .subcommand(Command::new("play-local").about("Play a local track")
-            .arg(Arg::new("path")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())))
+                .help("Deletes any previously imported tracks that are no longer in an imported playlist since last import.")));
+
+    #[cfg(feature = "offline-playback")]
+    {
+        cmd = cmd
+            .subcommand(Command::new("download").about("Download a track")
+                .arg(Arg::new("track_id")
+                    .value_parser(clap::builder::NonEmptyStringValueParser::new()))
+                .arg(Arg::new("path")
+                    .value_parser(clap::builder::NonEmptyStringValueParser::new())))
+            .subcommand(Command::new("play-local").about("Play a local track")
+                .arg(Arg::new("path")
+                    .value_parser(clap::builder::NonEmptyStringValueParser::new())));
+    }
+
+    cmd
 }

@@ -22,6 +22,7 @@ pub struct State {
     pub ui: Mutex<UIState>,
     pub player: RwLock<PlayerState>,
     pub data: RwLock<AppData>,
+    #[cfg(feature = "offline-playback")]
     pub downloaded_tracks: RwLock<Vec<String>>, // Store downloaded tracks
 
     pub is_daemon: bool,
@@ -43,6 +44,7 @@ impl State {
             ui: Mutex::new(ui),
             player: RwLock::new(PlayerState::default()),
             data: RwLock::new(app_data),
+            #[cfg(feature = "offline-playback")]
             downloaded_tracks: RwLock::new(Vec::new()), // Initialize downloaded tracks
             is_daemon,
         }
@@ -56,6 +58,7 @@ impl State {
                 && self.is_daemon)
     }
 
+    #[cfg(feature = "offline-playback")]
     pub fn add_downloaded_track(&self, track: String) {
         self.downloaded_tracks.write().push(track);
     }

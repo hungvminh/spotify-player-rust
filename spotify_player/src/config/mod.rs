@@ -195,6 +195,7 @@ pub struct LibraryLayoutConfig {
     pub album_percent: u16,
 }
 
+#[cfg(feature = "streaming")]
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 #[serde(from = "StreamingTypeOrBool")]
 pub enum StreamingType {
@@ -202,9 +203,11 @@ pub enum StreamingType {
     DaemonOnly,
     Never,
 }
+#[cfg(feature = "streaming")]
 config_parser_impl!(StreamingType);
 
 // For backward compatibility, to accept booleans for enable_streaming
+#[cfg(feature = "streaming")]
 #[derive(Deserialize)]
 enum RawStreamingType {
     Always,
@@ -212,6 +215,7 @@ enum RawStreamingType {
     Never,
 }
 
+#[cfg(feature = "streaming")]
 #[derive(Deserialize)]
 #[serde(untagged)]
 enum StreamingTypeOrBool {
@@ -219,6 +223,7 @@ enum StreamingTypeOrBool {
     Type(RawStreamingType),
 }
 
+#[cfg(feature = "streaming")]
 impl From<StreamingTypeOrBool> for StreamingType {
     fn from(v: StreamingTypeOrBool) -> Self {
         match v {

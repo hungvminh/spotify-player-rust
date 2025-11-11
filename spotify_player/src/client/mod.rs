@@ -1,5 +1,6 @@
 use std::ops::Deref;
 use std::{borrow::Cow, collections::HashMap, sync::Arc};
+#[cfg(feature = "offline-playback")]
 use reqwest::Url;
 use crate::config;
 use crate::{auth::AuthConfig, state::*};
@@ -1617,6 +1618,7 @@ impl Client {
     }
 
     /// Download a track and save it locally
+    #[cfg(feature = "offline-playback")]
     pub async fn download_track(&self, track_id: TrackId<'_>, path: &std::path::Path) -> Result<()> {
         let track = self.track(track_id).await?;
         let url = format!("https://api.spotify.com/v1/tracks/{}/preview", track.id.id());
@@ -1627,6 +1629,7 @@ impl Client {
     }
 
     /// Play a local track from a file
+    #[cfg(feature = "offline-playback")]
     pub async fn play_local_track(&self, path: &std::path::Path) -> Result<()> {
         let bytes = tokio::fs::read(path).await?;
         let (_stream, handle) = rodio::OutputStream::try_default()?;
